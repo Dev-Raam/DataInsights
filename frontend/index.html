@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DataInsights - Home</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">DataInsights</div>
+      <ul class="nav-links">
+        <li><a href="prediction.html">Get Prediction</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+      <div class="search-box">
+        <input type="text" placeholder="Search..." id="searchInput" />
+        <button id="searchBtn">&#128269;</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Welcome to DataInsights</h1>
+        <p>Uncover customer behavior, analyze trends, and get personalized recommendations.</p>
+        <a href="prediction.html" class="btn">Explore Dashboard</a>
+      </div>
+      <div class="hero-image">
+        <img src="assets/consumerbehavior.jpg" alt="Visualization of customer behavior analytics" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Reviews and Feedback Section -->
+    <section id="reviewsFeedback" class="content-section">
+      <h2>Reviews & Feedback</h2>
+      <div class="reviews-container" style="display: flex; gap: 2rem; margin-top: 1rem;">
+
+        <!-- Product Section (Left) -->
+        <div class="product-section" style="flex: 1; min-width: 300px; border: 1px solid #ccc; border-radius: 8px; padding: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Products</h3>
+            <div style="display: flex; align-items: center;">
+              <input type="text" id="productSearchInput" placeholder="Search for a product..." style="width: 200px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px;" />
+              <button id="productSearchBtn" style="background-color: #40a8cb; color: white; border: none; padding: 0.5rem; border-radius: 8px; cursor: pointer; margin-left: 10px;">🔍</button>
+            </div>
+          </div>
+          <div id="productDisplay" class="product-display" style="padding: 1rem; border: 1px solid #ccc; border-radius: 8px; margin-top: 1rem; min-height: 100px; text-align: center;">
+            No Products!! 😊
+          </div>
+
+          <!-- Sentiment Score Bar -->
+          <div style="margin-top: 1rem;">
+            <div style="font-weight: bold; margin-bottom: 0.5rem;">Feedback Bar</div>
+            <div style="background-color: #eee; height: 20px; width: 100%; border-radius: 10px; overflow: hidden;">
+              <div id="sentiment-bar-fill" style="height: 100%; width: 0%; background-color: #ccc; transition: width 0.5s ease;"></div>
+            </div>
+            <div id="sentiment-score-text" style="margin-top: 0.5rem; font-size: 0.9rem; color: #555;">No feedback score available</div>
+          </div>
+        </div>
+
+        <!-- Feedback Section (Right) -->
+        <div class="feedback-section" style="flex: 1; min-width: 300px; border: 1px solid #ccc; border-radius: 8px; padding: 1rem;">
+          <h3>Feedbacks</h3>
+          <div id="feedbackDisplay" class="feedback-display" style="padding: 1rem; border: 1px solid #ccc; border-radius: 8px; margin-top: 1rem; min-height: 100px; text-align: center;">
+            No feedbacks!! 🙄
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="content-section">
+      <h2>Features</h2>
+      <p>This project includes a robust set of features to empower your data analysis:</p>
+      <ul>
+        <li><strong>Real-Time Dashboard:</strong> Interactive visualizations of customer metrics.</li>
+        <li><strong>Personalized Recommendations:</strong> Intelligent algorithms to suggest products based on behavior.</li>
+        <li><strong>Advanced Analytics:</strong> In-depth insights into customer purchase patterns and feedback trends.</li>
+        <li><strong>Responsive Design:</strong> A user-friendly interface for desktop and mobile.</li>
+        <li><strong>Scalable Architecture:</strong> Designed to handle growing datasets and user traffic.</li>
+      </ul>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="content-section">
+      <h2>About</h2>
+      <p>The DataInsights project aims to harness the power of data science to transform raw customer data into actionable insights. 
+        By leveraging advanced machine learning algorithms and interactive visualizations, our goal is to help businesses understand 
+        customer behavior, predict trends, and deliver personalized experiences. Whether you are tracking purchase patterns or analyzing feedback, 
+        our platform is designed to deliver clarity and strategic guidance for data-driven decisions.
+      </p>
+    </section>
+  </main>
+
+  <script src="home.js"></script>
+</body>
+</html>

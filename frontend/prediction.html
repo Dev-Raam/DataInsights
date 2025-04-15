@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Prediction - DataInsights</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">DataInsights</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+      <div class="search-box">
+        <input type="text" placeholder="Search..." id="searchInput" />
+        <button id="searchBtn">&#128269;</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Search Results Section -->
+    <section id="searchResults" class="content-section">
+      <h2>Search Results</h2>
+      <div class="search-results-container">
+        <div id="searchResultsList" class="search-results-list"></div>
+      </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="content-section">
+      <h2>Dashboard</h2>
+      <p>Visualize key metrics and track customer behavior through interactive charts and graphs.</p>
+      <div class="card-container">
+        <div class="card">
+          <h3>Total Purchases</h3>
+          <p id="totalPurchases">Loading...</p>
+        </div>
+        <div class="card">
+          <h3>Active Users</h3>
+          <p id="activeUsers">Loading...</p>
+        </div>
+        <div class="card">
+          <h3>Feedback Score</h3>
+          <p id="feedbackScore">Loading...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Churn Prediction Section -->
+    <section id="churnPrediction" class="content-section">
+      <h2>Churn Prediction</h2>
+      <label>Total Spending: <input type="number" id="totalSpending" required /></label>
+      <label>Purchase Frequency: <input type="number" id="purchaseFrequency" required /></label>
+      <label>Return Rate: <input type="number" id="returnRate" step="0.01" required /></label>
+      <label>Model Type:
+        <select id="churnModelType">
+          <option value="rf">Random Forest</option>
+          <option value="xgb">XGBoost</option>
+        </select>
+      </label>
+      <button id="predictChurnBtn">Predict Churn</button>
+      <p id="churnResult"></p>
+    </section>
+
+    <!-- Customer Segmentation Section -->
+    <section id="customerSegmentation" class="content-section">
+      <h2>Customer Segmentation</h2>
+      <label>Recency (Days since last purchase): <input type="number" id="recency" required /></label>
+      <label>Frequency (Number of purchases): <input type="number" id="frequency" required /></label>
+      <label>Monetary (Total spending): <input type="number" id="monetary" required /></label>
+      <button id="predictSegmentBtn">Predict Segment</button>
+      <p id="segmentResult"></p>
+    </section>
+
+    <!-- Product Recommendations Section -->
+    <section id="productRecommendations" class="content-section">
+      <h2>Product Recommendations</h2>
+      <label>Customer ID: <input type="number" id="customerId" required /></label>
+      <button id="recommendProductsBtn">Get Recommendations</button>
+      <p id="recommendationsResult"></p>
+    </section>
+
+    <!-- Customer Insights Section -->
+    <section id="insights" class="content-section">
+      <h2>Customer Insights</h2>
+      <div class="chart-scroll-container">
+        <div class="chart-container">
+          <canvas id="purchaseTrendsChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <div id="d3-chart"></div>
+        </div>
+        <div id="static-charts">
+          <img id="spendingChart" class="chart-container" alt="Spending Distribution">
+          <img id="churnSpendingChart" class="chart-container" alt="Churn vs Spending">
+          <img id="ageDistributionChart" class="chart-container" alt="Customer Age Distribution">
+          <img id="correlationHeatmapChart" class="chart-container" alt="Feature Correlation Heatmap">
+          <img id="churnMatrixRFChart" class="chart-container" alt="Churn Confusion Matrix RF">
+          <img id="churnMatrixXGBChart" class="chart-container" alt="Churn Confusion Matrix XGB">
+          <img id="churnFeatureImportanceChart" class="chart-container" alt="Churn Feature Importance">
+          <img id="elbowMethodChart" class="chart-container" alt="Customer Elbow Method">
+          <img id="sentimentDistributionChart" class="chart-container" alt="Sentiment Distribution">
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="content-section">
+        <h2>About</h2>
+        <p>The DataInsights project is built to harness the power of data science and machine learning to turn raw customer data into meaningful, 
+            actionable insights. Using advanced algorithms and interactive visualizations, we help businesses understand customer behavior, 
+            anticipate trends, and tailor experiences to individual needs. This predictive capability is driven by an existing dataset, 
+            allowing the platform to analyze patterns and provide data-backed forecasts. Whether you're exploring past purchase behavior or 
+            reviewing customer feedback, our system delivers accurate predictions to support smarter, strategic decisions.
+        </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

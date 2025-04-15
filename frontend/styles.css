@@ -1,0 +1,424 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    background-color: #f4f7f9;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  /* Navigation Bar */
+  header {
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4a90e2;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-links a:hover {
+    color: #4a90e2;
+  }
+  
+  .search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .search-box input {
+    border: none;
+    padding: 0.5rem;
+    outline: none;
+  }
+  
+  .search-box button {
+    background: #4a90e2;
+    border: none;
+    color: #fff;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  /* Hero Section */
+  .hero {
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #4a90e2, #50e3c2);
+    color: #fff;
+    flex-wrap: wrap;
+  }
+  
+  .hero-text {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-text p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn {
+    background: #fff;
+    color: #4a90e2;
+    padding: 0.7rem 1.2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  .hero-image {
+    margin-left: auto;
+    flex: 0 0 50%;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+  
+  .hero-image img {
+    width: 50%;     
+    height: 100%;   
+    object-fit: cover; 
+    border-radius: 10px;
+  }
+  
+  /* Content Sections */
+  .content-section {
+    padding: 2rem;
+    background-color: #fff;
+    margin: 1rem 0;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .content-section h2 {
+    margin-bottom: 1rem;
+    color: #4a90e2;
+  }
+  
+  /* Card Container */
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .card {
+    background-color: #f9f9f9;
+    flex: 1;
+    padding: 1rem;
+    border-radius: 5px;
+    min-width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  /* Search Results Section */
+  #searchResults {
+    display: block; 
+    padding: 2rem;
+    background-color: #fff;
+    margin-top: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    min-height: 150px; 
+    text-align: center;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Search Results Title */
+  #searchResults h2 {
+    margin-bottom: 1rem;
+    color: #4a90e2;
+    text-align: left;
+    font-size: 20px;
+  }
+
+  /* Search Results Container */
+  .search-results-container {
+    overflow-x: auto; 
+    white-space: nowrap;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    min-height: 120px; 
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* Search Results List */
+  .search-results-list {
+    display: flex;
+    gap: 1rem;
+  }
+
+  /* Default Message When No Results */
+  .no-results {
+    color: #999;
+    font-size: 16px;
+    text-align: center;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  /* Search Result Items */
+  .search-item {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 5px;
+    min-width: 200px;
+    max-width: 250px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; 
+  }
+
+  /* Search Item Images */
+  .search-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    max-height: 150px;
+    object-fit: cover;
+  }
+
+  /* Hover Effect */
+  .search-item:hover {
+    transform: translateY(-5px);
+  }
+
+  /* Scrollbar Styling */
+  .search-results-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .search-results-container::-webkit-scrollbar-thumb {
+    background: #4a90e2;
+    border-radius: 4px;
+  }
+
+  .search-results-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  /* Styling for Churn Prediction, Customer Segmentation, and Product Recommendations */
+  #churnPrediction, #customerSegmentation, #productRecommendations {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+  }
+
+  #churnPrediction h2, 
+  #customerSegmentation h2, 
+  #productRecommendations h2 {
+    color: #4a90e2;
+    margin-bottom: 1.2rem;
+    font-size: 1.5rem;
+    text-align: left;
+  }
+
+  #churnPrediction label, 
+  #customerSegmentation label, 
+  #productRecommendations label {
+    display: block;
+    font-weight: bold;
+    margin: 0.8rem 0 0.3rem;
+    color: #333;
+  }
+
+  #churnPrediction input, 
+  #customerSegmentation input, 
+  #productRecommendations input, 
+  #churnModelType {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+
+  #churnModelType {
+    background: #f8f9fa;
+    cursor: pointer;
+  }
+
+  #churnPrediction button, 
+  #customerSegmentation button, 
+  #productRecommendations button {
+    width: 100%;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+  }
+
+  #churnPrediction button:hover, 
+  #customerSegmentation button:hover, 
+  #productRecommendations button:hover {
+    background: #357ABD;
+  }
+
+  #churnResult, 
+  #segmentResult, 
+  #recommendationsResult {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    #churnPrediction, #customerSegmentation, #productRecommendations {
+        padding: 1.5rem;
+    }
+    
+    #churnPrediction h2, 
+    #customerSegmentation h2, 
+    #productRecommendations h2 {
+        font-size: 1.5rem;
+    }
+
+    #churnPrediction button, 
+    #customerSegmentation button, 
+    #productRecommendations button {
+        font-size: 0.9rem;
+    }
+  }
+  
+  .chart-scroll-container {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    overflow-x: auto; 
+    overflow-y: hidden; 
+    white-space: nowrap; 
+    padding: 10px 0;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    width: 100%;
+  }
+
+  .chart-container {
+    flex: 0 0 auto; 
+    width: 400px; 
+    height: 400px;
+    margin: 0 10px; 
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    scroll-snap-align: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #static-charts {
+    display: flex; 
+    flex-direction: row; 
+    flex-wrap: nowrap; 
+    align-items: center;
+  }
+
+  #static-charts img {
+    width: 400px; 
+    height: 400px; 
+    object-fit: contain; 
+    margin: 0 10px; 
+    border-radius: 8px;
+  }
+
+  .chart-container canvas,
+  .chart-container #d3-chart {
+    width: 100% !important; 
+    height: 400px !important; 
+    display: block; 
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+    }
+    .nav-links {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .hero {
+      flex-direction: column;
+      text-align: center;
+    }
+    .hero-text, .hero-image {
+      margin: 1rem 0;
+    }
+  }
+
+  #feedbackDisplay ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  #feedbackDisplay li {
+    margin-bottom: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  
