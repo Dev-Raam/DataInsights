@@ -1,4 +1,4 @@
-# 🕵️📈 Customer Behavior Analysis & Recommendation System 
+# 🕵️📈 DataInsights 
 
 **Unlock Insights, Drive Sales:** A smart analytics tool to understand customer behavior and deliver personalized recommendations using AI/ML.
 
