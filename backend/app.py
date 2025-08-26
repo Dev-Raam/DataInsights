@@ -227,6 +227,7 @@ def fetch_product_details():
         print("Fetch product details error:", e)
         return jsonify({"error": "Failed to fetch product details."}), 500
 
+
 def compute_sentiment_score(reviews):
     sentiments = []
     for review in reviews:
@@ -239,6 +240,231 @@ def compute_sentiment_score(reviews):
         return sentiment_score
     else:
         return None
+
+
+# ---- New: Live Sales Summary API ----
+@app.route("/api/sales-summary", methods=["POST"])
+def sales_summary():
+    try:
+        payload = request.get_json(force=True) or {}
+        category = (payload.get("category") or "").strip()
+        product_title = (payload.get("product_title") or "").strip()
+
+        # Ensure purchase date is parsed
+        if not np.issubdtype(df["Purchase Date"].dtype, np.datetime64):
+            local_df = df.copy()
+            local_df["Purchase Date"] = pd.to_datetime(local_df["Purchase Date"], errors="coerce")
+        else:
+            local_df = df
+
+        # Filter by category or fuzzy match on title tokens (very light heuristic)
+        filtered_df = local_df.copy()
+        if category:
+            filtered_df = filtered_df[filtered_df["Product Category"].astype(str).str.lower().str.contains(category.lower(), na=False)]
+        elif product_title:
+            tokens = [t for t in product_title.lower().split() if len(t) > 2]
+            if tokens:
+                mask = False
+                for t in tokens[:3]:
+                    mask = mask | filtered_df["Product Category"].astype(str).str.lower().str.contains(t, na=False)
+                filtered_df = filtered_df[mask]
+
+        if filtered_df.empty:
+            filtered_df = local_df
+
+        # Compute totals
+        total_sales = float(filtered_df["Total Purchase Amount"].sum()) if "Total Purchase Amount" in filtered_df.columns else 0.0
+        total_orders = int(filtered_df.shape[0])
+
+        # Time-based summaries (last 7 and 30 days)
+        now = pd.Timestamp.utcnow()
+        last_7 = filtered_df[filtered_df["Purchase Date"] >= now - pd.Timedelta(days=7)]
+        last_30 = filtered_df[filtered_df["Purchase Date"] >= now - pd.Timedelta(days=30)]
+
+        summary = {
+            "total_sales": round(total_sales, 2),
+            "total_orders": total_orders,
+            "last_7d_sales": round(float(last_7["Total Purchase Amount"].sum()), 2) if not last_7.empty else 0.0,
+            "last_30d_sales": round(float(last_30["Total Purchase Amount"].sum()), 2) if not last_30.empty else 0.0,
+        }
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": f"Failed to compute sales summary: {str(e)}"}), 500
+
+
+# ---- New: AI Assist Chat Endpoint ----
+try:
+    from openai import OpenAI
+    _OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+    _openai_client = OpenAI(api_key=_OPENAI_KEY) if _OPENAI_KEY else None
+except Exception:
+    _openai_client = None
+
+
+def _build_context_summary(product_info: dict, reviews: list, sales: dict) -> str:
+    if not product_info:
+        return "No product context provided. Ask the user for a product link (Amazon/Flipkart)."
+
+    title = product_info.get("title") or "Unknown Title"
+    price = product_info.get("price") or "N/A"
+    rating = product_info.get("rating") or "N/A"
+    source = product_info.get("source") or "Unknown"
+    sentiment_score = product_info.get("sentiment_score")
+    sentiment_str = f"{sentiment_score}/5" if sentiment_score is not None else "N/A"
+
+    sales_bits = []
+    if sales:
+        if sales.get("last_7d_sales") is not None:
+            sales_bits.append(f"7d sales: {sales.get('last_7d_sales')}")
+        if sales.get("last_30d_sales") is not None:
+            sales_bits.append(f"30d sales: {sales.get('last_30d_sales')}")
+    sales_text = ", ".join(sales_bits) if sales_bits else "No recent sales data"
+
+    reviews_text = "; ".join((reviews or [])[:3]) if reviews else "No reviews available"
+
+    return (
+        f"Product: {title} (Source: {source})\n"
+        f"Price: {price}, Rating: {rating}, Sentiment: {sentiment_str}\n"
+        f"Sales: {sales_text}\n"
+        f"Sample reviews: {reviews_text}"
+    )
+
+
+def _heuristic_ai_reply(user_message: str, product_info: dict, reviews: list, sales: dict) -> str:
+    summary = _build_context_summary(product_info, reviews, sales)
+    # Very light rule-based guidance
+    pros = []
+    cons = []
+
+    sentiment = (product_info or {}).get("sentiment_score")
+    if sentiment is not None:
+        if sentiment >= 4.0:
+            pros.append("Strong positive sentiment from recent reviews.")
+        elif sentiment >= 3.0:
+            pros.append("Generally favorable sentiment, with some mixed feedback.")
+        else:
+            cons.append("Below-average sentiment; consider alternatives or check detailed reviews.")
+
+    # Price heuristic if numeric can be parsed
+    price_raw = (product_info or {}).get("price") or ""
+    price_num = None
+    try:
+        price_num = float(''.join(ch for ch in price_raw if ch.isdigit() or ch == '.'))
+    except Exception:
+        pass
+
+    if price_num is not None and price_num > 0:
+        if price_num > 50000:  # assume INR high-ticket
+            cons.append("High price point; verify that it meets your exact requirements.")
+        elif price_num < 2000:
+            pros.append("Budget-friendly option.")
+
+    # Sales heuristic
+    if sales:
+        last_30 = sales.get("last_30d_sales") or 0
+        if last_30 > 0:
+            pros.append("Recent sales activity suggests market interest.")
+
+    advice = []
+    if pros:
+        advice.append("Why it could be good: " + " ".join(pros))
+    if cons:
+        advice.append("Cautions: " + " ".join(cons))
+
+    base = (
+        f"Here's a quick summary based on available data:\n\n{summary}\n\n" +
+        ("\n".join(advice) if advice else "") +
+        ("\n\nTell me your use-case and constraints (budget, size, brand, features) so I can advise if this fits or propose alternatives." )
+    )
+
+    if user_message and user_message.strip():
+        base += f"\n\nRegarding your note: '{user_message.strip()}', here are tailored thoughts: "
+        if "gaming" in user_message.lower():
+            base += "Consider performance metrics (CPU/GPU), thermals, and refresh rate."
+        elif "battery" in user_message.lower():
+            base += "Prioritize battery capacity (mAh/Wh) and real-world reviews on endurance."
+        elif "camera" in user_message.lower():
+            base += "Check sensor size, OIS, low-light performance, and user photo samples."
+        else:
+            base += "I can refine suggestions as you share more specifics."
+
+    return base
+
+
+@app.route("/api/ai/assist", methods=["POST"])
+def ai_assist():
+    try:
+        payload = request.get_json(force=True) or {}
+        message = (payload.get("message") or "").strip()
+        history = payload.get("history") or []
+        product_info = payload.get("product_info") or {}
+        reviews = payload.get("reviews") or []
+
+        # gather sales summary for context
+        category = product_info.get("category") or product_info.get("source") or ""
+        # Compute quick sales summary inline (avoid nested request cycles)
+        try:
+            sales = None
+            if product_info or category:
+                if not np.issubdtype(df["Purchase Date"].dtype, np.datetime64):
+                    local_df = df.copy()
+                    local_df["Purchase Date"] = pd.to_datetime(local_df["Purchase Date"], errors="coerce")
+                else:
+                    local_df = df
+                filtered_df = local_df
+                if category:
+                    filtered_df = filtered_df[filtered_df["Product Category"].astype(str).str.lower().str.contains(str(category).lower(), na=False)]
+                if filtered_df.empty:
+                    filtered_df = local_df
+                now = pd.Timestamp.utcnow()
+                last_7 = filtered_df[filtered_df["Purchase Date"] >= now - pd.Timedelta(days=7)]
+                last_30 = filtered_df[filtered_df["Purchase Date"] >= now - pd.Timedelta(days=30)]
+                sales = {
+                    "last_7d_sales": round(float(last_7["Total Purchase Amount"].sum()), 2) if not last_7.empty else 0.0,
+                    "last_30d_sales": round(float(last_30["Total Purchase Amount"].sum()), 2) if not last_30.empty else 0.0,
+                }
+        except Exception:
+            sales = None
+
+        # If OpenAI is available, use it; otherwise use heuristic reply
+        if _openai_client and _OPENAI_KEY:
+            context = _build_context_summary(product_info, reviews, sales)
+            messages = [{"role": "system", "content": "You are a concise product expert. Summarize products from e-commerce links, explain use-cases, ask clarifying questions, and assess fit based on user's needs. Include recent sales context when available."}]
+            if context:
+                messages.append({"role": "system", "content": context})
+            for h in history:
+                if isinstance(h, dict) and h.get("role") in ("user", "assistant") and h.get("content"):
+                    messages.append({"role": h["role"], "content": h["content"]})
+            if message:
+                messages.append({"role": "user", "content": message})
+
+            try:
+                completion = _openai_client.chat.completions.create(
+                    model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                    messages=messages,
+                    temperature=0.3,
+                )
+                reply_text = completion.choices[0].message.content.strip()
+                return jsonify({
+                    "reply": reply_text,
+                    "used_model": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                })
+            except Exception as oe:
+                # Fallback to heuristic on any OpenAI failure
+                reply_text = _heuristic_ai_reply(message, product_info, reviews, sales)
+                return jsonify({
+                    "reply": reply_text,
+                    "used_model": "heuristic-fallback",
+                    "error": f"OpenAI error: {str(oe)}"
+                })
+        else:
+            reply_text = _heuristic_ai_reply(message, product_info, reviews, sales)
+            return jsonify({
+                "reply": reply_text,
+                "used_model": "heuristic-fallback"
+            })
+    except Exception as e:
+        return jsonify({"error": f"AI assist failed: {str(e)}"}), 500
 
 
 def scrape_amazon(url):
